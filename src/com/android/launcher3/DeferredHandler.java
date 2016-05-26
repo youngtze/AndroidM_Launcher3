@@ -38,6 +38,7 @@ public class DeferredHandler {
     private Impl mHandler = new Impl();
 
     @Thunk class Impl extends Handler implements MessageQueue.IdleHandler {
+        //从线程消息队列取出空消息后，处理mQueue中的任务
         public void handleMessage(Message msg) {
             Runnable r;
             synchronized (mQueue) {
@@ -76,6 +77,7 @@ public class DeferredHandler {
     /** Schedule runnable to run after everything that's on the queue right now. */
     public void post(Runnable runnable) {
         synchronized (mQueue) {
+            //将任务添加到mQueue中
             mQueue.add(runnable);
             if (mQueue.size() == 1) {
                 scheduleNextLocked();
@@ -105,7 +107,7 @@ public class DeferredHandler {
             r.run();
         }
     }
-
+    //向线程队列发送空消息
     void scheduleNextLocked() {
         if (mQueue.size() > 0) {
             Runnable peek = mQueue.getFirst();
